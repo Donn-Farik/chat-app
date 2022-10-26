@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-app-bar class="pl-5" color="primary">
+    <div v-if="userGoogle === false">Loading...</div>
+    <v-app-bar class="pl-5" color="primary" v-if="userGoogle !== false">
       <v-app-bar-title>Farik</v-app-bar-title>
 
       <v-btn @click="googleAccess" v-if="!userGoogle">Sign in</v-btn>
@@ -8,7 +9,10 @@
     </v-app-bar>
     <v-main app>
       <v-container>
-        <Chat />
+        <Chat v-if="userGoogle" />
+        <div v-else>
+          <h1 class="text-center mt-15">You have to sign up</h1>
+        </div>
       </v-container>
     </v-main>
     <v-footer class="d-flex flex-column" app>

@@ -13,10 +13,21 @@
 
 <script setup>
 import { ref } from "vue";
+import { addDoc, collection } from "@firebase/firestore";
+import { db, auth } from "../firebase";
 const message = ref("");
-const sendMessage = () => {
+const sendMessage = async () => {
   console.log(message.value);
-  message.value = "";
+  try {
+    await addDoc(collection(db, "chat"), {
+      text: message.value,
+      time: Date.now(),
+      uid: auth.currentUser.displayName,
+    });
+    message.value = "";
+  } catch (error) {
+    console.log(error);
+  }
 };
 </script>
 

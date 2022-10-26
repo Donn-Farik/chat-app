@@ -15,30 +15,23 @@
 
 <script setup>
 import { ref } from "vue";
-const userChat = ref({ uid: "002" });
-const messages = ref([
-  {
-    id: 1,
-    text: "este es mi primer mensgae",
-    uid: "001",
-    time: Date.now(),
-    displayName: "Farik",
-  },
-  {
-    id: 2,
-    text: "este es mi primer mensgae 2",
-    uid: "002",
-    time: Date.now(),
-    displayName: "Ergon",
-  },
-  {
-    id: 2,
-    text: "este es mi primer mensgae 3",
-    uid: "003",
-    time: Date.now(),
-    displayName: "Ergon",
-  },
-]);
+import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
+import { db, auth } from "../firebase";
+const userChat = ref(auth.currentUser);
+const messages = ref([]);
+
+const q = query(collection(db, "chat"), orderBy("time"));
+const unsubscribe = onSnapshot(q, (snapshot) => {
+  snapshot.docChanges().forEach((change) => {
+    if (change.type === "added") {
+      console.log("Message:", change.doc.id, change.doc.data());
+      messages.value.push({
+        id: change.doc.id,
+        ...change.doc.data(),
+      });
+    }
+  });
+});
 </script>
 
 <style></style>
